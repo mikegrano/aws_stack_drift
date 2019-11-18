@@ -11,9 +11,16 @@ parser.add_argument("--region", type=str, help="AWS region")
 args = parser.parse_args()
 regions = [args.region]
 
+#AWS configuration for retry
+config = Config(
+    retries = dict(
+        max_attempts = 10
+    )
+)
+
 for region in regions:
 
-   stack_session = boto3.client('cloudformation', region_name=region)
+   stack_session = boto3.client('cloudformation', config=config, region_name=region)
    
    paginator = stack_session.get_paginator('list_stacks')
    response_iterator = paginator.paginate()
